@@ -39,32 +39,25 @@ library(ggplot2)
 De este modo, la data se encuentra conformada de la siguiente manera:
 
 ```{r 2, warning=FALSE, message=FALSE, comment=""}
+summary(balances_2014)
+str(balances_2014)
 ```
-
 
 En donde la estructura se compone de tibble [47,033 × 347],esta situación se debe a la presencia de valores ausentes (NA) en la base de datos, lo que implica la necesidad de eliminar dichos registros. Por lo tanto, se procede a crear una nueva base de datos excluyendo aquellos registros que contienen valores faltantes. De esta forma, se garantiza la integridad y precisión de la información para realizar un análisis más completo y confiable.
 
 Se realiza la respectiva limpieza de los datos, en donde; se genera una nueva data denominada Data_Balances_2014.
 
-De esta manera, lo siguiente a analizar seran las empresas, dentro de las cuales se analizara
-•  La variable que contiene los nombres de las compañías
-• Status: variable que especifica la situación de la compañía. En cuentrese esta activa, en liquidación, etc
-• Tipo_de_empresa: variable que contiene la clase de compañía analizada. Sea esta anónima,
-economía mixta, etc)
-• País
-• Provincia
-• Cantón
-• Ciudad
-• Actividad económica: variable que contiene la descripción del código CIIU4 NIVEL 1
-• Subactividad: variable que contiene la descripción del código CIIU4 NIVEL 6
-• Liquidez corriente
-• Endeudamiento del activo
-• Endeudamiento patrimonial
-• Endeudamiento del Activo Fijo
-• Apalancamiento
-
-
 ```{r 3}
+n_columnas <- ncol(balances_2014)
+for (i in 1:n_columnas) {
+Data_Balances_2014 <- balances_2014[!is.na(balances_2014[, i]), ]
+}
+dim(Data_Balances_2014)
+```
+
+De esta manera, lo siguiente a analizar seran las empresas, dentro de las cuales se analizara: • La variable que contiene los nombres de las compañías • Status: variable que especifica la situación de la compañía. En cuentrese esta activa, en liquidación, etc • Tipo_de_empresa: variable que contiene la clase de compañía analizada. Sea esta anónima, economía mixta, etc) • País • Provincia • Cantón • Ciudad • Actividad económica: variable que contiene la descripción del código CIIU4 NIVEL 1 • Subactividad: variable que contiene la descripción del código CIIU4 NIVEL 6 • Liquidez corriente • Endeudamiento del activo • Endeudamiento patrimonial • Endeudamiento del Activo Fijo • Apalancamiento
+
+```{r 4}
 #Columnas de interes ----
 empresas<- as_tibble(Data_Balances_2014)
 
@@ -90,63 +83,83 @@ empresas<- rename(empresas, Empresas = nombre_cia,
                   Subactividad= ciiu4_nivel6)
 str(empresas)
 ```
-La siguiente tabla resume el número total de empresas por actividad económica y también por actividad económica para cada cantón:
 
+Para lo cual la siguiente tabla contiene, el número total de empresas por actividad económica:
 
-```{r}
+```{r5}
+empresas_por_actividad_economica <- read_xlsx("data/ciiu.xlsx")
+
+empresas_por_actividad_economica %>% filter(CODIGO=="A" | CODIGO=="B" | CODIGO=="C"| CODIGO=="D"|
+                             CODIGO=="E"|CODIGO=="F"|CODIGO=="G"|CODIGO=="H"|
+                             CODIGO=="I"|CODIGO=="J"|CODIGO=="K"|CODIGO=="L"|
+                             CODIGO=="M"|CODIGO=="N"|CODIGO=="O"|CODIGO=="P"|
+                             CODIGO=="Q"|CODIGO=="R"|CODIGO=="S"|CODIGO=="T"|
+                             CODIGO=="U"|CODIGO=="Z")
+
+empresas_por_actividad_economica<-
+    empresas_por_actividad_economica %>%select(CODIGO,DESCRIPCION)
+
+empresas_act_econ<-empresas %>% select(Actividad_económica)
+
+tabla1<-empresas_act_econ %>% group_by(Actividad_económica) %>%
+  summarise(Ntotal_emp_Actividad_eco=n()) %>%
+  left_join(empresas_por_actividad_economica ,by=c("Actividad_económica"="CODIGO"))
+tabla1<-select(tabla1,Actividad_económica,DESCRIPCION,Ntotal_emp_Actividad_eco)
+
 print(tabla1)
 ```
 
+De este mismo modo, la tabla acontuniacion, contiene el número total de empresas por actividad económica por cantón:
 
+```{r 6}
+tabla2<-empresas%>% group_by(Actividad_económica,Cantón) %>%
+  summarise(Ntotal_empresas_ecoycanton=n()) %>%
+  left_join(empresas_por_actividad_economica,by=c("Actividad_económica"="CODIGO"))
+
+tabla2<-select(tabla2,Actividad_económica,DESCRIPCION,
+               Cantón,Ntotal_empresas_ecoycanton)
+
+print(tabla2)
+```
+
+El compativo de los indicadores financieros de liquidez y solvencia por Status y provincia se muestran a continuación de manera gráfica:
+
+#Liquidez corriente
+Se realiza un comparativo del Endeudamiento del activo por Status y Provincia, y se observa que en la provincia del Pichincha se registra un mayor Endeudamiento del activo en comparación con las otras provincias. Además, la mayoría de estas empresas tienen como Status la CANCELACIÓN PERMISO OPERACIÓN - OFICIO INSCRITA RM. Este hallazgo sugiere que las empresas ubicadas en la provincia del Pichincha tienden a tener un mayor nivel de endeudamiento en comparación con las empresas ubicadas en otras provincias, y que muchas de ellas se encuentran en la etapa de "CANCELACIÓN PERMISO OPERACIÓN - OFICIO INSCRITA RM".
+
+Este análisis puede ser relevante para entender la situación financiera de las empresas en la provincia del Pichincha y podría ayudar a identificar posibles áreas de mejora o áreas de riesgo financiero. Asimismo, podría servir como punto de partida para investigaciones más detalladas sobre las razones detrás del mayor endeudamiento en esta provincia y el impacto que tiene en el estado financiero de las empresas con el mencionado Status.
 
 ```{r}
-
+ggplot(empresas, aes(x =Provincia, y = Liquidez_corriente,fill=Status)) +
+  geom_bar(stat = "summary", position = "stack")+
+  labs(title = "Comparativo liquidez corriente segun Estado y Provincia.",
+       x = "Provincia", y = "Liquidez corriente") +
+  theme(legend.title = element_text(4),
+        legend.text=element_text(size = 4),
+        legend.position = "bottom", legend.key.size = unit(0.3, "cm"),
+        axis.text.x = element_text(size=5,angle = 45, hjust = 1))+
+  guides(
+    fill = guide_legend(ncol = 4)
+  )
 ```
+#Endeudamiento del activo
+Se realiza un comparativo del Endeudamiento patrimonial por Status y Provincia, y se observa que en la provincia de Santo Domingo de los Tsáchilas se registra un mayor Endeudamiento patrimonial en comparación con las otras provincias.
 
+Este hallazgo sugiere que las empresas ubicadas en la provincia de Santo Domingo de los Tsáchilas tienen un nivel más alto de endeudamiento en relación con su patrimonio en comparación con las empresas ubicadas en otras provincias. El endeudamiento patrimonial es una medida importante que indica el grado en el que una empresa ha financiado sus activos a través de deuda en lugar de capital propio. Un alto nivel de endeudamiento patrimonial puede indicar que la empresa está asumiendo un mayor riesgo financiero y depende en gran medida de préstamos para financiar sus operaciones y adquisiciones.
+
+Este análisis podría ser relevante para comprender la situación financiera de las empresas en la provincia de Santo Domingo de los Tsáchilas y puede servir como punto de partida para investigaciones adicionales sobre las razones detrás de este mayor endeudamiento patrimonial y su impacto en la estabilidad financiera de las empresas en la mencionada provincia.
 
 ```{r pressure, echo=FALSE}
-ggplot(empresas, aes(x = Tipo_de_empresa)) +
-  geom_line(aes(y = Liquidez_corriente, group = 1,
-                color = "Liquidez Corriente"),
-            stat = "summary", fun = "mean", position = "dodge", size = 1) +
-  geom_point(aes(y = Liquidez_corriente, group = 1,
-                 color = "Liquidez Corriente"),
-             stat = "summary", fun = "mean", position = "dodge", size = 3) +
-  geom_line(aes(y = Endeudamiento_del_activo, group = 1,
-                color = "Endeudamiento del Activo"),
-            stat = "summary", fun = "mean", position = "dodge", size = 1) +
-  geom_point(aes(y = Endeudamiento_del_activo, group = 1,
-                 color = "Endeudamiento del Activo"),
-             stat = "summary", fun = "mean", position = "dodge", size = 3)+
-  geom_line(aes(y = Endeudamiento_patrimonial, group = 1,
-                color = "Endeudamiento Patrimonial"),
-            stat = "summary", fun = "mean", position = "dodge", size = 1) +
-  geom_line(aes(y = Endeudamiento_del_Activo_Fijo, group = 1,
-                color = "Endeudamiento del Activo Fijo"),
-            stat = "summary", fun = "mean", position = "dodge", size = 1) +
-  geom_line(aes(y = Apalancamiento, group = 1,
-                color = "Apalancamiento"),
-            stat = "summary", fun = "mean", position = "dodge", size = 1) +
-  geom_point(aes(y = Endeudamiento_patrimonial, group = 1,
-                 color = "Endeudamiento Patrimonial"),
-             stat = "summary", fun = "mean", position = "dodge", size = 3) +
-  geom_point(aes(y = Endeudamiento_del_Activo_Fijo, group = 1,
-                 color = "Endeudamiento del Activo Fijo"),
-             stat = "summary", fun = "mean", position = "dodge", size = 3) +
-  geom_point(aes(y = Apalancamiento, group = 1, color = "Apalancamiento"),
-             stat = "summary", fun = "mean", position = "dodge", size = 3)+
-  scale_color_manual(values = c("Liquidez Corriente" = "purple",
-                                "Endeudamiento del Activo" = "red",
-                                "Endeudamiento Patrimonial" = "orange",
-                                "Endeudamiento del Activo Fijo" = "pink",
-                                "Apalancamiento" = "magenta")) +
-  theme_minimal() +
-  labs(title = "Comparativo de los indicadores financieros de
-liquidez y solvencia por tipo de empresa",
-       x = "Tipo de Empresa", y = "Valor en Dólares",
-       color = "Indicadores Financieros") + # Cambiar el título de la leyenda
-  theme(plot.title = element_text(size = 12),
-        axis.text.x = element_text(size=7,angle = 45, hjust = 1))
-```
+ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_activo,fill=Status)) +
+  geom_bar(stat = "summary", position = "stack") +
+  labs(title = "Comparativo Endeudamiento del activo por Status y Provincia",
+       x = "Provincia", y = "Endeudamiento del activo") +
+  theme(legend.title = element_text(size = 4),
+        legend.text=element_text(size = 4),legend.position = "bottom",
+        legend.key.size = unit(0.3, "cm"),
+        axis.text.x = element_text(size=5,angle = 45, hjust = 1))+
+  guides(
+    fill = guide_legend(ncol = 4)
+  )
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
