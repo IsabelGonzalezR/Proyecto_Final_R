@@ -2,7 +2,9 @@
 title: "Análisis Financiero 2014"
 author: "González Rocío"
 date: "2023-08-07"
-output: pdf_document
+output:
+  word_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -37,22 +39,71 @@ library(ggplot2)
 De este modo, la data se encuentra conformada de la siguiente manera:
 
 ```{r 2, warning=FALSE, message=FALSE, comment=""}
-str(balances_2014)
-
+summary(balances_2014)
 ```
 
 
-Esta situación se debe a la presencia de valores ausentes (NA) en la base de datos, lo que implica la necesidad de eliminar dichos registros. Por lo tanto, se procede a crear una nueva base de datos excluyendo aquellos registros que contienen valores faltantes. De esta forma, se garantiza la integridad y precisión de la información para realizar un análisis más completo y confiable.
+En donde la estructura se compone de tibble [47,033 × 347],esta situación se debe a la presencia de valores ausentes (NA) en la base de datos, lo que implica la necesidad de eliminar dichos registros. Por lo tanto, se procede a crear una nueva base de datos excluyendo aquellos registros que contienen valores faltantes. De esta forma, se garantiza la integridad y precisión de la información para realizar un análisis más completo y confiable.
+
+Se realiza la respectiva limpieza de los datos, en donde; se genera una nueva data denominada Data_Balances_2014.
+
+De esta manera, lo siguiente a analizar seran las empresas, dentro de las cuales se analizara
+•  La variable que contiene los nombres de las compañías
+• Status: variable que especifica la situación de la compañía. En cuentrese esta activa, en liquidación, etc
+• Tipo_de_empresa: variable que contiene la clase de compañía analizada. Sea esta anónima,
+economía mixta, etc)
+• País
+• Provincia
+• Cantón
+• Ciudad
+• Actividad económica: variable que contiene la descripción del código CIIU4 NIVEL 1
+• Subactividad: variable que contiene la descripción del código CIIU4 NIVEL 6
+• Liquidez corriente
+• Endeudamiento del activo
+• Endeudamiento patrimonial
+• Endeudamiento del Activo Fijo
+• Apalancamiento
+
+
+```{r 3}
+#Columnas de interes ----
+empresas<- as_tibble(Data_Balances_2014)
+
+empresas<-mutate(empresas,Liquidez_corriente=v345/v539,
+                 Endeudamiento_del_activo=v599/v499,
+                 Endeudamiento_patrimonial=v599/v698,
+                 Endeudamiento_del_Activo_Fijo=v698/v498,
+                 Apalancamiento=v539/v499)
+
+empresas <- select(empresas,nombre_cia , situacion, tipo, pais,
+                   provincia, canton, ciudad, ciiu4_nivel1, ciiu4_nivel6,
+                   Liquidez_corriente,Endeudamiento_del_activo, Endeudamiento_patrimonial,
+                   Endeudamiento_del_Activo_Fijo,Apalancamiento)
+#Renombrando columnas
+empresas<- rename(empresas, Empresas = nombre_cia,
+                  Status = situacion,
+                  Tipo_de_empresa= tipo,
+                  País= pais,
+                  Provincia= provincia,
+                  Cantón= canton,
+                  Ciudad= ciudad,
+                  Actividad_económica= ciiu4_nivel1,
+                  Subactividad= ciiu4_nivel6)
+str(empresas)
+```
+La siguiente tabla resume el número total de empresas por actividad económica y también por actividad económica para cada cantón:
+
+
+```{r}
+print(tabla1)
+```
 
 
 
 ```{r}
-str(Data_Balances_2014)
-```
-En donde la estructura se compone de tibble [47,033 × 347],
-e procede a la generacion de un tibble que al cual se ha denominado como empresas, el cual contiene las siguientes variables: • Empresas: variable que contiene los nombres de las compañías • Status: variable que especifica la situación de la compañía ( activa, en liquidación, etc) • Tipo_de_empresa: variable que contiene la clase de compañía analizada (anónima, economía mixta, etc) • País • Provincia • Cantón • Ciudad • Actividad económica: variable que contiene la descripción del código CIIU4 NIVEL 1 • Subactividad: variable que contiene la descripción del código CIIU4 NIVEL 6 • Liquidez corriente • Endeudamiento del activo • Endeudamiento patrimonial • Endeudamiento del Activo Fijo • Apalancamiento
 
-Esta situación se debe a la presencia de valores ausentes (NA) en la base de datos, lo que implica la necesidad de eliminar dichos registros. Por lo tanto, se procede a crear una nueva base de datos excluyendo aquellos registros que contienen valores faltantes. De esta forma, se garantiza la integridad y precisión de la información para realizar un análisis más completo y confiable.
+```
+
 
 ```{r pressure, echo=FALSE}
 ggplot(empresas, aes(x = Tipo_de_empresa)) +
