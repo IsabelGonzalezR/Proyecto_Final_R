@@ -39,7 +39,6 @@ library(ggplot2)
 De este modo, la data se encuentra conformada de la siguiente manera:
 
 ```{r 2, warning=FALSE, message=FALSE, comment=""}
-summary(balances_2014)
 ```
 
 

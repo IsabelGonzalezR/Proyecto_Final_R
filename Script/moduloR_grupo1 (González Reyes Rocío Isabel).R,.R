@@ -14,6 +14,7 @@ str(balances_2014)
 sum(is.na(balances_2014))
 
 #Limpiando la data
+
 n_columnas <- ncol(balances_2014)
 for (i in 1:n_columnas) {
 Data_Balances_2014 <- balances_2014[!is.na(balances_2014[, i]), ]
@@ -21,7 +22,7 @@ Data_Balances_2014 <- balances_2014[!is.na(balances_2014[, i]), ]
 dim(Data_Balances_2014)
 
 str(Data_Balances_2014)
-view(Data_Balances_2014)
+View(Data_Balances_2014)
 
 #Parte 1 – Data:
 
@@ -72,7 +73,7 @@ tabla1<-empresas_act_econ %>% group_by(Actividad_económica) %>%
   left_join(empresas_por_actividad_economica ,by=c("Actividad_económica"="CODIGO"))
 tabla1<-select(tabla1,Actividad_económica,DESCRIPCION,Ntotal_emp_Actividad_eco)
 
-view(tabla1)
+View(tabla1)
 
 #Tabla resumen del número total de empresas por actividad económica por cada cantón.
 
@@ -283,3 +284,10 @@ ggplot(Top_10_Apalancamiento_p, aes(x = reorder(Empresas,Apalancamiento), y = Ap
   labs(title = "Top 10 de empresas con mayor apalancamiento",
        x = "Empresas", y = "Apalancamiento") +
   theme(axis.text.x = element_text(size=6,angle = 45, hjust = 1))
+
+
+install.packages("knitr")
+library (knitr)
+install.packages("tinytex")
+tinytex::install_tinytex()
+
