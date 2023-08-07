@@ -26,22 +26,77 @@ El objetivo de este informe es presentar un análisis financiero sólido y profe
 ## Datos
 
 Los datos empleados en este análisis provienen del archivo "balances_2014.xlsx", el cual contiene una amplia gama de información sobre diversas empresas. Esta valiosa base de datos proporciona detalles cruciales, tales como el estado legal de las compañías, su tipo, tamaño, ubicación geográfica, actividad económica y niveles de endeudamiento. A partir de esta fuente de información, hemos llevado a cabo meticulosas manipulaciones y cálculos para obtener las variables clave necesarias para el análisis financiero.\
-Para el respectivo análisis de los datos se cargaron los paquetes ́tidyverse ́, y ́ggplot2 ́.
+Para el respectivo análisis de los datos se cargaron los paquetes ́tidyverse ́ lector de archivos xl, y ́ggplot2 ́.
 
+```{r 1, warning=FALSE, message=FALSE, comment="" }
+library(readxl)
 library(dplyr)
 library(ggplot2)
-Se realizo la respectiva limpeza de datos, en donde se obtuvo la nueva base de datos:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+De este modo, la data se encuentra conformada de la siguiente manera:
 
-You can also embed plots, for example:
+```{r 2, warning=FALSE, message=FALSE, comment=""}
+str(balances_2014)
+
+```
+
+
+Esta situación se debe a la presencia de valores ausentes (NA) en la base de datos, lo que implica la necesidad de eliminar dichos registros. Por lo tanto, se procede a crear una nueva base de datos excluyendo aquellos registros que contienen valores faltantes. De esta forma, se garantiza la integridad y precisión de la información para realizar un análisis más completo y confiable.
+
+
+
+```{r}
+str(Data_Balances_2014)
+```
+En donde la estructura se compone de tibble [47,033 × 347],
+e procede a la generacion de un tibble que al cual se ha denominado como empresas, el cual contiene las siguientes variables: • Empresas: variable que contiene los nombres de las compañías • Status: variable que especifica la situación de la compañía ( activa, en liquidación, etc) • Tipo_de_empresa: variable que contiene la clase de compañía analizada (anónima, economía mixta, etc) • País • Provincia • Cantón • Ciudad • Actividad económica: variable que contiene la descripción del código CIIU4 NIVEL 1 • Subactividad: variable que contiene la descripción del código CIIU4 NIVEL 6 • Liquidez corriente • Endeudamiento del activo • Endeudamiento patrimonial • Endeudamiento del Activo Fijo • Apalancamiento
+
+Esta situación se debe a la presencia de valores ausentes (NA) en la base de datos, lo que implica la necesidad de eliminar dichos registros. Por lo tanto, se procede a crear una nueva base de datos excluyendo aquellos registros que contienen valores faltantes. De esta forma, se garantiza la integridad y precisión de la información para realizar un análisis más completo y confiable.
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+ggplot(empresas, aes(x = Tipo_de_empresa)) +
+  geom_line(aes(y = Liquidez_corriente, group = 1,
+                color = "Liquidez Corriente"),
+            stat = "summary", fun = "mean", position = "dodge", size = 1) +
+  geom_point(aes(y = Liquidez_corriente, group = 1,
+                 color = "Liquidez Corriente"),
+             stat = "summary", fun = "mean", position = "dodge", size = 3) +
+  geom_line(aes(y = Endeudamiento_del_activo, group = 1,
+                color = "Endeudamiento del Activo"),
+            stat = "summary", fun = "mean", position = "dodge", size = 1) +
+  geom_point(aes(y = Endeudamiento_del_activo, group = 1,
+                 color = "Endeudamiento del Activo"),
+             stat = "summary", fun = "mean", position = "dodge", size = 3)+
+  geom_line(aes(y = Endeudamiento_patrimonial, group = 1,
+                color = "Endeudamiento Patrimonial"),
+            stat = "summary", fun = "mean", position = "dodge", size = 1) +
+  geom_line(aes(y = Endeudamiento_del_Activo_Fijo, group = 1,
+                color = "Endeudamiento del Activo Fijo"),
+            stat = "summary", fun = "mean", position = "dodge", size = 1) +
+  geom_line(aes(y = Apalancamiento, group = 1,
+                color = "Apalancamiento"),
+            stat = "summary", fun = "mean", position = "dodge", size = 1) +
+  geom_point(aes(y = Endeudamiento_patrimonial, group = 1,
+                 color = "Endeudamiento Patrimonial"),
+             stat = "summary", fun = "mean", position = "dodge", size = 3) +
+  geom_point(aes(y = Endeudamiento_del_Activo_Fijo, group = 1,
+                 color = "Endeudamiento del Activo Fijo"),
+             stat = "summary", fun = "mean", position = "dodge", size = 3) +
+  geom_point(aes(y = Apalancamiento, group = 1, color = "Apalancamiento"),
+             stat = "summary", fun = "mean", position = "dodge", size = 3)+
+  scale_color_manual(values = c("Liquidez Corriente" = "purple",
+                                "Endeudamiento del Activo" = "red",
+                                "Endeudamiento Patrimonial" = "orange",
+                                "Endeudamiento del Activo Fijo" = "pink",
+                                "Apalancamiento" = "magenta")) +
+  theme_minimal() +
+  labs(title = "Comparativo de los indicadores financieros de
+liquidez y solvencia por tipo de empresa",
+       x = "Tipo de Empresa", y = "Valor en Dólares",
+       color = "Indicadores Financieros") + # Cambiar el título de la leyenda
+  theme(plot.title = element_text(size = 12),
+        axis.text.x = element_text(size=7,angle = 45, hjust = 1))
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
