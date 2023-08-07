@@ -376,7 +376,7 @@ print(Top_10_Apalancamiento_p)
 
 ```
 
-##Conclusion
+## Conclusion
 
 El presente análisis financiero de las empresas correspondientes al año 2014 ha sido un ejercicio exhaustivo y detallado que nos ha permitido examinar y comprender en profundidad la situación económica de estas compañías. A través de indicadores financieros clave como la liquidez, solvencia, endeudamiento del activo y apalancamiento, hemos obtenido una visión integral de su salud financiera.
 
