@@ -39,7 +39,7 @@ empresas <- select(empresas,nombre_cia , situacion, tipo, pais,
                    provincia, canton, ciudad, ciiu4_nivel1, ciiu4_nivel6,
                    Liquidez_corriente,Endeudamiento_del_activo, Endeudamiento_patrimonial,
                    Endeudamiento_del_Activo_Fijo,Apalancamiento)
-#Renombrar las columnas
+#Renombrando columnas
 empresas<- rename(empresas, Empresas = nombre_cia,
                   Status = situacion,
                   Tipo_de_empresa= tipo,
