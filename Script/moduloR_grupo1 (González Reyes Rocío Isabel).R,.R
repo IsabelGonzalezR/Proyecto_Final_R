@@ -2,10 +2,10 @@
 #González Reyes Rocío Isabel
 
 install.packages("readxl")
-install.packages("tidyverse")
+install.packages("dplyr")
 install.packages("ggplot2")
 library(readxl)
-library(tidyverse)
+library(dplyr)
 library(ggplot2)
 
 balances_2014 <- read_excel("Data/balances_2014.xlsx")

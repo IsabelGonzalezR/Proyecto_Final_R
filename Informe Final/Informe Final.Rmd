@@ -24,7 +24,13 @@ Finalmente, se extraerán conclusiones significativas basadas en los resultados 
 El objetivo de este informe es presentar un análisis financiero sólido y profesional, que permita a los lectores entender a profundidad la situación económica de las empresas estudiadas y, en consecuencia, tomar decisiones informadas y acertadas. Con el propósito de ofrecer un análisis completo y significativo, nos enfocamos en presentar resultados precisos y relevantes que aporten valor a la comprensión del panorama financiero de las empresas en el año objeto de estudio.
 
 ## Datos
-Los datos empleados en este análisis provienen del archivo "balances_2014.xlsx", el cual contiene una amplia gama de información sobre diversas empresas. Esta valiosa base de datos proporciona detalles cruciales, tales como el estado legal de las compañías, su tipo, tamaño, ubicación geográfica, actividad económica y niveles de endeudamiento. A partir de esta fuente de información, hemos llevado a cabo meticulosas manipulaciones y cálculos para obtener las variables clave necesarias para el análisis financiero.
+
+Los datos empleados en este análisis provienen del archivo "balances_2014.xlsx", el cual contiene una amplia gama de información sobre diversas empresas. Esta valiosa base de datos proporciona detalles cruciales, tales como el estado legal de las compañías, su tipo, tamaño, ubicación geográfica, actividad económica y niveles de endeudamiento. A partir de esta fuente de información, hemos llevado a cabo meticulosas manipulaciones y cálculos para obtener las variables clave necesarias para el análisis financiero.\
+Para el respectivo análisis de los datos se cargaron los paquetes ́tidyverse ́, y ́ggplot2 ́.
+
+library(dplyr)
+library(ggplot2)
+Se realizo la respectiva limpeza de datos, en donde se obtuvo la nueva base de datos:
 
 ```{r cars}
 summary(cars)
