@@ -1,0 +1,34 @@
+---
+title: "Análisis Financiero 2014"
+author: "González Rocío"
+date: "2023-08-07"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+En el presente análisis, se ha llevado a cabo un estudio financiero de empresas correspondientes al año 2014. El objetivo principal de esta investigación es examinar y comprender la situación económica de estas compañías a través de indicadores relevantes como la liquidez y solvencia.
+
+Los datos utilizados provienen de un archivo llamado "balances_2014.xlsx", que contiene información detallada sobre diferentes empresas, incluyendo su estado, tipo, tamaño, ubicación geográfica, actividad económica y niveles de endeudamiento. A partir de este conjunto de datos, se han realizado diversas manipulaciones y cálculos para obtener las variables clave necesarias para el análisis.
+
+El análisis se divide en varias secciones, que incluyen una descripción detallada de los datos utilizados, preguntas de investigación específicas que guían el estudio, y conclusiones basadas en los resultados obtenidos. También se presentarán gráficos comparativos para visualizar las diferencias y similitudes entre las empresas en función de su estado, provincia y tipo.
+
+El informe busca proporcionar una visión clara y significativa de la salud financiera de las empresas analizadas, brindando información valiosa para la toma de decisiones estratégicas y futuras investigaciones en el campo financiero.
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
