@@ -10,7 +10,7 @@ library(ggplot2)
 
 balances_2014 <- read_excel("Data/balances_2014.xlsx")
 str(balances_2014)
-
+file.choose()
 sum(is.na(balances_2014))
 
 #Limpiando la data
@@ -87,6 +87,7 @@ tabla2<-select(tabla2,Actividad_económica,DESCRIPCION,
 view(tabla2)
 
 #Indicadores financieros de liquidez y solvencia por Status y provincia.
+# Liquidez_corriente
 ggplot(empresas, aes(x =Provincia, y = Liquidez_corriente,fill=Status)) +
   geom_bar(stat = "summary", position = "stack")+
   labs(title = "Comparativo liquidez corriente según Estado y Provincia.",
@@ -99,7 +100,7 @@ ggplot(empresas, aes(x =Provincia, y = Liquidez_corriente,fill=Status)) +
     fill = guide_legend(ncol = 4)
   )
 
-
+#Endeudamiento del activo
 ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_activo,fill=Status)) +
   geom_bar(stat = "summary", position = "stack") +
   labs(title = "Comparativo Endeudamiento del activo por Status y Provincia",
@@ -112,7 +113,7 @@ ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_activo,fill=Status)) +
     fill = guide_legend(ncol = 4)
   )
 
-
+#Endeudamiento patrimonial 
 ggplot(empresas, aes(x =Provincia, y = Endeudamiento_patrimonial,fill=Status)) +
   geom_bar(stat = "summary", position = "stack") +
   labs(
@@ -127,7 +128,7 @@ ggplot(empresas, aes(x =Provincia, y = Endeudamiento_patrimonial,fill=Status)) +
     fill = guide_legend(ncol = 4) 
   )
 
-
+#Endeudamiento_del_Activo_Fijo
 ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_Activo_Fijo,
                      fill=Status)) +
   geom_bar(stat = "summary", position = "stack") +
@@ -141,7 +142,7 @@ ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_Activo_Fijo,
     fill = guide_legend(ncol = 4) 
   )
 
-
+#Apalancamiento
 ggplot(empresas, aes(x =Provincia, y = Apalancamiento,fill=Status)) +
   geom_bar(stat = "summary", position = "stack") +
   labs(title = "Comparativo Apalancamiento por Status y Provincia",
@@ -206,9 +207,9 @@ liquidez y solvencia por tipo de empresa",
 #1.¿El endeudamiento del activo fue mayor en empresas micro + pequeñas vs. grandes?
 
 
-empresas$trab_direc<-data_balances_limpio$trab_direc
-empresas$tamanio<-data_balances_limpio$tamanio
-empresas$trab_admin<-data_balances_limpio$trab_admin
+empresas$trab_direc<-Data_Balances_2014$trab_direc
+empresas$tamanio<-Data_Balances_2014$tamanio
+empresas$trab_admin<-Data_Balances_2014$trab_admin
 
 Micro_pequeña<-empresas %>% select(tamanio,Endeudamiento_del_activo) %>%
   filter(tamanio=="PEQUEÑA" | tamanio=="MICRO")
@@ -222,12 +223,8 @@ Pregunta1<-data.frame(
   Tipo_empresa = c("Micro + Pequeñas", "Grandes"),
   Endeudamiento=c(Endactivo_Micro_pequeña,Endactivo_Grande)
 )
-ggplot(Pregunta1, aes(x = Tipo_empresa, y = Endeudamiento)) +
-  geom_bar(stat = "identity", fill= "magenta") +
-  labs(title = "Endeudamiento del activo en empresas micro + pequeñas vs. grandes",
-       x = "Tamaño empresa", y = "Endeudamiento del activo") +
-  theme_minimal()
-View(Pregunta1)
+
+print(Pregunta1)
        
 #Respuesta: Esto indica que las micro y pequeñas empresas tienen el mayor ratio de 
 #             endeudamiento en comparación con las empresa grandes.
@@ -241,7 +238,7 @@ Liquidez_tipodecompañia<-empresas %>%
         group_by(Tipo_de_empresa) %>% filter(trab_direc>=60)
 
 Liquidez_tipodecompañia_datos<-
-  Liquidez_tipodecompañia[ is.finite(Luquidez_tipodecompañia$Liquidez_corriente), ]
+  Liquidez_tipodecompañia[ is.finite(Liquidez_tipodecompañia$Liquidez_corriente), ]
 
 Liquidez_tipodecompañia_datos_<-sum(Liquidez_tipodecompañia_datos$Liquidez_corriente)
 
@@ -258,15 +255,9 @@ Pregunta2_tab<-data.frame(
   liquidez_x_compañía= c(Liquidez_tipodecompañia_datos_, Pregunta2)
 )
 
-View(Pregunta2_tab)
+print(Pregunta2_tab)
 
-ggplot(Pregunta2_tab, aes(x = Filtros, y = liquidez_x_compañía)) +
-  geom_bar(stat = "identity", fill= "purple") +
-  labs(title = "Liquidez por tipo de compañía vs empresas que tienen más
-de 60 trabajadores directos y que cuenta
-con 100 a 800 trabajadores administrativos",
-       x = "", y = "Liquidez") +
-  theme_minimal()
+
 
 #3. Describe el top 10 de empresas con mayor apalancamiento.
 
@@ -277,7 +268,7 @@ Top_10_Apalancamiento_p<-
 
 Top_en_orden<-Top_10_Apalancamiento_p %>% arrange(desc(Apalancamiento))
 Top_10_Apalancamiento_p<-head(Top_en_orden,10)
-view(Top_10_Apalancamiento_p)
+print(Top_10_Apalancamiento_p)
 
 ggplot(Top_10_Apalancamiento_p, aes(x = reorder(Empresas,Apalancamiento), y = Apalancamiento)) +
   geom_bar(stat = "identity", fill= "purple") +

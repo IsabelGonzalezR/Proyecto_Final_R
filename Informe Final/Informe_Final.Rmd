@@ -39,15 +39,14 @@ library(ggplot2)
 De este modo, la data se encuentra conformada de la siguiente manera:
 
 ```{r 2, warning=FALSE, message=FALSE, comment=""}
-summary(balances_2014)
-str(balances_2014)
+balances_2014<-read_xlsx("C:\\Users\\BIENBENIDOS UNEMI\\Desktop\\Rocio\\R\\Proyecto_Final_R\\Data\\balances_2014.xlsx")
 ```
 
 En donde la estructura se compone de tibble [47,033 × 347],esta situación se debe a la presencia de valores ausentes (NA) en la base de datos, lo que implica la necesidad de eliminar dichos registros. Por lo tanto, se procede a crear una nueva base de datos excluyendo aquellos registros que contienen valores faltantes. De esta forma, se garantiza la integridad y precisión de la información para realizar un análisis más completo y confiable.
 
 Se realiza la respectiva limpieza de los datos, en donde; se genera una nueva data denominada Data_Balances_2014.
 
-```{r 3}
+```{r 3, warning=FALSE, message=FALSE, comment=""}
 n_columnas <- ncol(balances_2014)
 for (i in 1:n_columnas) {
 Data_Balances_2014 <- balances_2014[!is.na(balances_2014[, i]), ]
@@ -57,7 +56,7 @@ dim(Data_Balances_2014)
 
 De esta manera, lo siguiente a analizar seran las empresas, dentro de las cuales se analizara: • La variable que contiene los nombres de las compañías • Status: variable que especifica la situación de la compañía. En cuentrese esta activa, en liquidación, etc • Tipo_de_empresa: variable que contiene la clase de compañía analizada. Sea esta anónima, economía mixta, etc) • País • Provincia • Cantón • Ciudad • Actividad económica: variable que contiene la descripción del código CIIU4 NIVEL 1 • Subactividad: variable que contiene la descripción del código CIIU4 NIVEL 6 • Liquidez corriente • Endeudamiento del activo • Endeudamiento patrimonial • Endeudamiento del Activo Fijo • Apalancamiento
 
-```{r 4}
+```{r 4, warning=FALSE, message=FALSE, comment=""}
 #Columnas de interes ----
 empresas<- as_tibble(Data_Balances_2014)
 
@@ -81,13 +80,14 @@ empresas<- rename(empresas, Empresas = nombre_cia,
                   Ciudad= ciudad,
                   Actividad_económica= ciiu4_nivel1,
                   Subactividad= ciiu4_nivel6)
-str(empresas)
+print(empresas)
 ```
 
 Para lo cual la siguiente tabla contiene, el número total de empresas por actividad económica:
 
 ```{r 5}
-empresas_por_actividad_economica <- read_xlsx("data/ciiu.xlsx")
+
+empresas_por_actividad_economica <- read_xlsx("C:\\Users\\BIENBENIDOS UNEMI\\Desktop\\Rocio\\R\\Proyecto_Final_R\\Data\\ciiu.xlsx")
 
 empresas_por_actividad_economica %>% filter(CODIGO=="A" | CODIGO=="B" | CODIGO=="C"| CODIGO=="D"|
                              CODIGO=="E"|CODIGO=="F"|CODIGO=="G"|CODIGO=="H"|
@@ -111,7 +111,7 @@ print(tabla1)
 
 De este mismo modo, la tabla acontuniacion, contiene el número total de empresas por actividad económica por cantón:
 
-```{r 6}
+```{r 6, warning=FALSE, message=FALSE, comment=""}
 tabla2<-empresas%>% group_by(Actividad_económica,Cantón) %>%
   summarise(Ntotal_empresas_ecoycanton=n()) %>%
   left_join(empresas_por_actividad_economica,by=c("Actividad_económica"="CODIGO"))
@@ -124,14 +124,14 @@ print(tabla2)
 
 El compativo de los indicadores financieros de liquidez y solvencia por Status y provincia se muestran a continuación de manera gráfica:
 
-#Liquidez corriente
+**Liquidez corriente**
 Se realiza un comparativo del Endeudamiento patrimonial por Status y Provincia, y se observa que en la provincia de Santo Domingo de los Tsáchilas se registra un mayor Endeudamiento patrimonial en comparación con las otras provincias.
 
 Este hallazgo sugiere que las empresas ubicadas en la provincia de Santo Domingo de los Tsáchilas tienen un nivel más alto de endeudamiento en relación con su patrimonio en comparación con las empresas ubicadas en otras provincias. El endeudamiento patrimonial es una medida importante que indica el grado en el que una empresa ha financiado sus activos a través de deuda en lugar de capital propio. Un alto nivel de endeudamiento patrimonial puede indicar que la empresa está asumiendo un mayor riesgo financiero y depende en gran medida de préstamos para financiar sus operaciones y adquisiciones.
 
 Este análisis podría ser relevante para comprender la situación financiera de las empresas en la provincia de Santo Domingo de los Tsáchilas y puede servir como punto de partida para investigaciones adicionales sobre las razones detrás de este mayor endeudamiento patrimonial y su impacto en la estabilidad financiera de las empresas en la mencionada provincia.
 
-```{r 7}
+```{r 7, warning=FALSE, message=FALSE, comment=""}
 ggplot(empresas, aes(x =Provincia, y = Liquidez_corriente,fill=Status)) +
   geom_bar(stat = "summary", position = "stack")+
   labs(title = "Comparativo liquidez corriente segun Estado y Provincia.",
@@ -144,12 +144,14 @@ ggplot(empresas, aes(x =Provincia, y = Liquidez_corriente,fill=Status)) +
     fill = guide_legend(ncol = 4)
   )
 ```
-#Endeudamiento del activo
+
+**Endeudamiento del activo**
 
 Se realiza un comparativo del Endeudamiento del activo por Status y Provincia, y se observa que en la provincia del Pichincha se registra un mayor Endeudamiento del activo en comparación con las otras provincias. Además, la mayoría de estas empresas tienen como Status la CANCELACIÓN PERMISO OPERACIÓN - OFICIO INSCRITA RM. Este hallazgo sugiere que las empresas ubicadas en la provincia del Pichincha tienden a tener un mayor nivel de endeudamiento en comparación con las empresas ubicadas en otras provincias, y que muchas de ellas se encuentran en la etapa de "CANCELACIÓN PERMISO OPERACIÓN - OFICIO INSCRITA RM".
 
 Este análisis puede ser relevante para entender la situación financiera de las empresas en la provincia del Pichincha y podría ayudar a identificar posibles áreas de mejora o áreas de riesgo financiero. Asimismo, podría servir como punto de partida para investigaciones más detalladas sobre las razones detrás del mayor endeudamiento en esta provincia y el impacto que tiene en el estado financiero de las empresas con el mencionado Status.
-```{r 8}
+
+```{r 8, warning=FALSE, message=FALSE, comment=""}
 ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_activo,fill=Status)) +
   geom_bar(stat = "summary", position = "stack") +
   labs(title = "Comparativo Endeudamiento del activo por Status y Provincia",
@@ -163,15 +165,15 @@ ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_activo,fill=Status)) +
   )
 ```
 
+**Endeudamiento patrimonial**
 
-#Endeudamiento patrimonial 
 Se realiza un comparativo del Endeudamiento patrimonial por Status y Provincia, y se observa que en la provincia de Santo Domingo de los Tsáchilas se registra un mayor Endeudamiento patrimonial en comparación con las otras provincias.
 
 Este hallazgo sugiere que las empresas ubicadas en la provincia de Santo Domingo de los Tsáchilas tienen un nivel más alto de endeudamiento en relación con su patrimonio en comparación con las empresas ubicadas en otras provincias. El endeudamiento patrimonial es una medida importante que indica el grado en el que una empresa ha financiado sus activos a través de deuda en lugar de capital propio. Un alto nivel de endeudamiento patrimonial puede indicar que la empresa está asumiendo un mayor riesgo financiero y depende en gran medida de préstamos para financiar sus operaciones y adquisiciones.
 
 Este análisis podría ser relevante para comprender la situación financiera de las empresas en la provincia de Santo Domingo de los Tsáchilas y puede servir como punto de partida para investigaciones adicionales sobre las razones detrás de este mayor endeudamiento patrimonial y su impacto en la estabilidad financiera de las empresas en la mencionada provincia.
 
-```{r 9}
+```{r 9, warning=FALSE, message=FALSE, comment=""}
 ggplot(empresas, aes(x =Provincia, y = Endeudamiento_patrimonial,fill=Status)) +
   geom_bar(stat = "summary", position = "stack") +
   labs(
@@ -186,7 +188,9 @@ ggplot(empresas, aes(x =Provincia, y = Endeudamiento_patrimonial,fill=Status)) +
     fill = guide_legend(ncol = 4) 
   )
 ```
-#Endeudamiento del activo fijo
+
+**Endeudamiento del activo fijo**
+
 El comparativo de Endeudamiento del Activo Fijo por Status y Provincia revela que en la provincia de Azuay se presenta un mayor Endeudamiento del Activo Fijo en comparación con otras provincias. Es importante destacar que la mayoría de estas empresas tienen como Status la DISOLUC. Y LIQUIDAC. ANTIC. INSCR. RM.
 
 El Endeudamiento del Activo Fijo es un indicador significativo que muestra la proporción de deuda utilizada para financiar los activos fijos de una empresa, como maquinaria, equipos, terrenos, edificios, entre otros. Un nivel elevado de Endeudamiento del Activo Fijo puede implicar un mayor riesgo para la empresa, ya que la dependencia excesiva de la deuda para adquirir activos fijos puede afectar la estabilidad financiera y la capacidad para enfrentar pagos de intereses y capital.
@@ -195,7 +199,7 @@ Es importante que las empresas, especialmente aquellas con alto Endeudamiento de
 
 El análisis de este indicador por Status y Provincia proporciona información valiosa para los directivos, inversionistas y otros interesados, permitiendo tomar decisiones informadas y estratégicas para el crecimiento y estabilidad financiera de la empresa.
 
-```{r 10}
+```{r 10, warning=FALSE, message=FALSE, comment=""}
 ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_Activo_Fijo,
                      fill=Status)) +
   geom_bar(stat = "summary", position = "stack") +
@@ -210,7 +214,8 @@ ggplot(empresas, aes(x =Provincia, y = Endeudamiento_del_Activo_Fijo,
   )
 ```
 
-#Apalancamiento
+**Apalancamiento**
+
 El comparativo de Apalancamiento por Status y Provincia muestra que en la provincia de Manabí se presenta un mayor Apalancamiento en comparación con otras provincias. Es relevante destacar que la mayoría de estas empresas tienen como Status la DISOLUC. Y LIQUIDAC. ANTIC. INSCR. RM.
 
 El Apalancamiento es un indicador financiero que refleja la relación entre el capital propio y el capital deuda utilizado para financiar las operaciones y actividades de una empresa. Un alto nivel de Apalancamiento indica que la empresa depende en gran medida de la deuda para financiar sus actividades, lo que puede aumentar el riesgo financiero y la vulnerabilidad a cambios en las condiciones económicas y tasas de interés.
@@ -221,7 +226,7 @@ Para las empresas con un alto Apalancamiento, es fundamental realizar una gesti�
 
 Este análisis comparativo de Apalancamiento por Status y Provincia proporciona información valiosa para los interesados en la empresa, como inversionistas, acreedores y directivos, permitiendo tomar decisiones informadas y estratégicas para proteger la salud financiera y asegurar el crecimiento sostenible de la compañía.
 
-```{r 11}
+```{r 11, warning=FALSE, message=FALSE, comment=""}
 ggplot(empresas, aes(x =Provincia, y = Apalancamiento,fill=Status)) +
   geom_bar(stat = "summary", position = "stack") +
   labs(title = "Comparativo Apalancamiento por Status y Provincia",
@@ -249,7 +254,7 @@ Es importante destacar que el análisis de liquidez y solvencia es fundamental p
 
 Este tipo de análisis es de gran utilidad para los inversionistas, acreedores y directivos, ya que les proporciona una visión clara y significativa de la estructura financiera de las empresas y les ayuda a tomar decisiones informadas para proteger sus intereses y asegurar la estabilidad y crecimiento sostenible de la compañía.
 
-```{r 12}
+```{r 12, warning=FALSE, message=FALSE, comment=""}
 ggplot(empresas, aes(x = Tipo_de_empresa)) +
   geom_line(aes(y = Liquidez_corriente, group = 1,
                 color = "Liquidez Corriente"),
@@ -295,33 +300,33 @@ liquidez y solvencia por tipo de empresa",
 ```
 
 ## Análisis
-#1.¿El endeudamiento del activo fue mayor en empresas micro + pequeñas vs. grandes?
 
-```{r}
-empresas$trab_direc<-data_balances_limpio$trab_direc
-empresas$tamanio<-data_balances_limpio$tamanio
-empresas$trab_admin<-data_balances_limpio$trab_admin
+**#1.¿El endeudamiento del activo fue mayor en empresas micro + pequeñas vs. grandes?**
 
-Micro_pequeña<-empresas %>% select(tamanio,Endeudamiento_del_activo) %>%
+```{r 12.1, warning=FALSE, message=FALSE, comment=""}
+empresas$trab_direc<-Data_Balances_2014$trab_direc
+empresas$tamanio<-Data_Balances_2014$tamanio
+empresas$trab_admin<-Data_Balances_2014$trab_admin
+
+Micro_pequena<-empresas %>% select(tamanio,Endeudamiento_del_activo) %>%
   filter(tamanio=="PEQUEÑA" | tamanio=="MICRO")
 
-Micro_pequeña_<-Micro_pequeña [ is.finite(Micro_pequeña$Endeudamiento_del_activo), ]
-Endactivo_Micro_pequeña<-sum(Micro_pequeña_$Endeudamiento_del_activo, na.rm = TRUE)
+Micro_pequena_<-Micro_pequena [ is.finite(Micro_pequena$Endeudamiento_del_activo), ]
+Endactivo_Micro_pequena<-sum(Micro_pequena_$Endeudamiento_del_activo, na.rm = TRUE)
 Grande<-empresas %>% select(tamanio,Endeudamiento_del_activo) %>%
   filter(tamanio=="GRANDE")
 Endactivo_Grande<-sum(Grande$Endeudamiento_del_activo, na.rm = TRUE)
 Pregunta1<-data.frame(
-  Tipo_empresa = c("Micro + Pequeñas", "Grandes"),
-  Endeudamiento=c(Endactivo_Micro_pequeña,Endactivo_Grande)
+  Tipo_empresa = c("Micro + Pequenas", "Grandes"),
+  Endeudamiento=c(Endactivo_Micro_pequena,Endactivo_Grande)
 )
 
 print(Pregunta1)
 ```
 
-De acuerdo a los datos proporcionados, se observa que el endeudamiento del activo fue significativamente mayor en el grupo de empresas clasificadas como micro + pequeñas, con un valor de 125,165.877. En contraste, las empresas grandes presentaron un nivel de endeudamiento del activo más bajo, con un valor de 2,854.922. Esta diferencia sugiere que las empresas micro + pequeñas dependieron más de la financiación a través del endeudamiento para respaldar sus operaciones y/o expansiones, en comparación con las empresas grandes que mantuvieron un menor nivel de endeudamiento. 
+De acuerdo a los datos proporcionados, se observa que el endeudamiento del activo fue significativamente mayor en el grupo de empresas clasificadas como micro + pequeñas, con un valor de 125,165.877. En contraste, las empresas grandes presentaron un nivel de endeudamiento del activo más bajo, con un valor de 2,854.922. Esta diferencia sugiere que las empresas micro + pequeñas dependieron más de la financiación a través del endeudamiento para respaldar sus operaciones y/o expansiones, en comparación con las empresas grandes que mantuvieron un menor nivel de endeudamiento.
 
-
-# 2. ¿La liquidez por tipo de compañía es diferente entre aquellas empresas que tienen más de 60 trabajadores directos y que cuenta con 100 a 800 trabajadores administrativos?
+**# 2. ¿La liquidez por tipo de compañía es diferente entre aquellas empresas que tienen más de 60 trabajadores directos y que cuenta con 100 a 800 trabajadores administrativos?**
 
 El análisis realizado muestra que la liquidez por tipo de compañía es diferente entre las empresas que tienen más de 60 trabajadores directos y aquellas que cuentan con 100 a 800 trabajadores administrativos.
 
@@ -331,34 +336,34 @@ En contraste, las empresas que cuentan con 100 a 800 trabajadores administrativo
 
 La diferencia significativa en los índices de liquidez entre ambos grupos de empresas sugiere que aquellas con un mayor número de trabajadores administrativos tienen una mejor gestión de sus activos corrientes y pasivos corrientes, lo que les proporciona una mayor liquidez y capacidad de pago. Esto puede deberse a una eficiente administración financiera, una mejor planificación de recursos o una estrategia de operaciones más sólida.
 
-
-```{r}
-Liquidez_tipodecompañia<-empresas %>% 
+```{r 13, warning=FALSE, message=FALSE, comment=""}
+Liquidez_tipodecompania<-empresas %>% 
       select(Tipo_de_empresa,Liquidez_corriente,trab_direc) %>%
         group_by(Tipo_de_empresa) %>% filter(trab_direc>=60)
 
-Liquidez_tipodecompañia_datos<-
-  Liquidez_tipodecompañia[ is.finite(Luquidez_tipodecompañia$Liquidez_corriente), ]
+Liquidez_tipodecompania_datos<-
+  Liquidez_tipodecompania[ is.finite(Liquidez_tipodecompania$Liquidez_corriente), ]
 
-Liquidez_tipodecompañia_datos_<-sum(Liquidez_tipodecompañia_datos$Liquidez_corriente)
+Liquidez_tipodecompania_datos_<-sum(Liquidez_tipodecompania_datos$Liquidez_corriente)
 
-Liquidez_tipodecompañia_100<-empresas %>% 
+Liquidez_tipodecompania_100<-empresas %>% 
   select(Liquidez_corriente,trab_admin,Tipo_de_empresa) %>%
   group_by(Tipo_de_empresa)%>% filter(trab_admin >=100 & trab_admin <=800)
 
-Liquidez_tipodecompañia_100_datos<- 
-  Liquidez_tipodecompañia_100[ is.finite(Liquidez_tipodecompañia_100$Liquidez_corriente), ]
-Pregunta2<-sum(Liquidez_tipodecompañia_100_datos$Liquidez_corriente)
+Liquidez_tipodecompania_100_datos<- 
+  Liquidez_tipodecompania_100[ is.finite(Liquidez_tipodecompania_100$Liquidez_corriente), ]
+Pregunta2<-sum(Liquidez_tipodecompania_100_datos$Liquidez_corriente)
 Pregunta2_tab<-data.frame(
   Filtros=c("Mayores o igual a 60 Trabajadores directos",
             " De 100 a 800 trabajadores administrativos "),
-  liquidez_x_compañía= c(Liquidez_tipodecompañia_datos_, Pregunta2)
+  liquidez_x_compania= c(Liquidez_tipodecompania_datos_, Pregunta2)
 )
 print(Pregunta2_tab)
 ```
-#3 Describe el top 10 de empresas con mayor apalancamiento.
 
-```{r}
+**#3 Describe el top 10 de empresas con mayor apalancamiento.**
+
+```{r 14, warning=FALSE, message=FALSE, comment=""}
 Top_10_Apalancamiento<-empresas %>% select(Empresas,Apalancamiento)
 Top_10_Apalancamiento_p<-
   Top_10_Apalancamiento[ is.finite(Top_10_Apalancamiento$Apalancamiento), ]
@@ -371,7 +376,8 @@ print(Top_10_Apalancamiento_p)
 
 ```
 
-#Conclusion
+##Conclusion
+
 El presente análisis financiero de las empresas correspondientes al año 2014 ha sido un ejercicio exhaustivo y detallado que nos ha permitido examinar y comprender en profundidad la situación económica de estas compañías. A través de indicadores financieros clave como la liquidez, solvencia, endeudamiento del activo y apalancamiento, hemos obtenido una visión integral de su salud financiera.
 
 Los datos utilizados en este estudio provienen de un archivo llamado "balances_2014.xlsx", el cual contiene información detallada sobre diferentes empresas, incluyendo su estado legal, tipo de empresa, tamaño, ubicación geográfica, actividad económica y niveles de endeudamiento. A partir de este conjunto de datos, hemos realizado diversas manipulaciones y cálculos para obtener las variables necesarias para nuestro análisis.
