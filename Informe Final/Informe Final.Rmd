@@ -11,13 +11,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introducción
 
-En el presente análisis, se ha llevado a cabo un estudio financiero de empresas correspondientes al año 2014. El objetivo principal de esta investigación es examinar y comprender la situación económica de estas compañías a través de indicadores relevantes como la liquidez y solvencia.
+El presente análisis representa un estudio financiero realizado sobre un conjunto de empresas correspondientes al año 2014. El propósito principal de esta investigación es examinar y comprender la situación económica de estas compañías a través de indicadores financieros relevantes, especialmente enfocados en la liquidez y solvencia.
 
-Los datos utilizados provienen de un archivo llamado "balances_2014.xlsx", que contiene información detallada sobre diferentes empresas, incluyendo su estado, tipo, tamaño, ubicación geográfica, actividad económica y niveles de endeudamiento. A partir de este conjunto de datos, se han realizado diversas manipulaciones y cálculos para obtener las variables clave necesarias para el análisis.
+Para llevar a cabo este estudio, se utilizó un conjunto de datos obtenido del archivo "balances_2014.xlsx", el cual contiene información detallada sobre diversas empresas, incluyendo su estado legal, tipo de compañía, tamaño, ubicación geográfica, actividad económica y niveles de endeudamiento. A partir de estos datos, se realizaron distintas manipulaciones y cálculos para obtener las variables clave necesarias para el análisis financiero.
 
-El análisis se divide en varias secciones, que incluyen una descripción detallada de los datos utilizados, preguntas de investigación específicas que guían el estudio, y conclusiones basadas en los resultados obtenidos. También se presentarán gráficos comparativos para visualizar las diferencias y similitudes entre las empresas en función de su estado, provincia y tipo.
+El análisis se divide en varias secciones bien definidas. En primer lugar, se describe detalladamente la estructura de los datos utilizados y se explican las variables relevantes que serán objeto de estudio. A continuación, se plantean preguntas específicas de investigación que guiarán el análisis y permitirán obtener insights valiosos sobre el comportamiento financiero de las empresas.
 
-El informe busca proporcionar una visión clara y significativa de la salud financiera de las empresas analizadas, brindando información valiosa para la toma de decisiones estratégicas y futuras investigaciones en el campo financiero.
+Posteriormente, se presentan los resultados obtenidos tras el análisis de las variables financieras, y se analizan las tendencias y patrones encontrados. Asimismo, se elaborarán gráficos comparativos para visualizar las diferencias y similitudes entre las empresas en función de su estado legal, provincia y tipo de compañía.
+
+Finalmente, se extraerán conclusiones significativas basadas en los resultados obtenidos, que brindarán una visión clara y precisa de la salud financiera de las empresas estudiadas en el año 2014. La información proporcionada será de gran utilidad para la toma de decisiones estratégicas y sentará las bases para futuras investigaciones en el campo financiero.
+
+El objetivo de este informe es presentar un análisis financiero sólido y profesional, que permita a los lectores entender a profundidad la situación económica de las empresas estudiadas y, en consecuencia, tomar decisiones informadas y acertadas. Con el propósito de ofrecer un análisis completo y significativo, nos enfocamos en presentar resultados precisos y relevantes que aporten valor a la comprensión del panorama financiero de las empresas en el año objeto de estudio.
+
+## Datos
 
 ```{r cars}
 summary(cars)
